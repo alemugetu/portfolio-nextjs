@@ -38,18 +38,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Email Provider dispatch (Brevo primary, Resend fallback)
-    const brevoApiKey = process.env.BREVO_API_KEY;
-    const toEmail = process.env.CONTACT_TO_EMAIL || "alemugetu78@gmail.com";
+    // 3. Email Provider Configuration
+    const brevoApiKey = process.env.BREVO_API_KEY?.trim();
+    const toEmail =
+      process.env.CONTACT_TO_EMAIL?.trim() ||
+      process.env.BREVO_SENDER_EMAIL?.trim() ||
+      "alemugetu2123@gmail.com";
     const brevoSenderEmail =
-      process.env.BREVO_SENDER_EMAIL ||
-      process.env.CONTACT_TO_EMAIL ||
-      "alemugetu78@gmail.com";
+      process.env.BREVO_SENDER_EMAIL?.trim() || toEmail;
 
-    let dispatched = false;
+    const hasRealBrevoKey =
+      Boolean(brevoApiKey) &&
+      !brevoApiKey?.includes("your-brevo-api-key-here") &&
+      brevoApiKey !== "";
 
-    // A. Brevo (brevo.com - 300 free emails/day)
-    if (brevoApiKey) {
+    // 4. Attempt Brevo Dispatch
+    if (hasRealBrevoKey && brevoApiKey) {
       try {
         const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
           method: "POST",
@@ -60,7 +64,7 @@ export async function POST(request: Request) {
           },
           body: JSON.stringify({
             sender: {
-              name: "Portfolio Contact",
+              name: "Portfolio Contact Form",
               email: brevoSenderEmail,
             },
             to: [
@@ -73,16 +77,18 @@ export async function POST(request: Request) {
               email: email.trim(),
               name: name.trim(),
             },
-            subject: `Portfolio Contact from ${name.trim()}`,
+            subject: `Portfolio Message from ${name.trim()}`,
             htmlContent: `
-              <div style="font-family: sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                <h2 style="color: #059669; margin-top: 0;">New Message from Portfolio</h2>
-                <p><strong>Sender Name:</strong> ${name.trim()}</p>
-                <p><strong>Sender Email:</strong> <a href="mailto:${email.trim()}">${email.trim()}</a></p>
-                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
-                <p><strong>Message:</strong></p>
-                <blockquote style="background: #f8fafc; border-left: 4px solid #10b981; margin: 0; padding: 12px 16px; white-space: pre-wrap;">${message.trim()}</blockquote>
-                <p style="font-size: 12px; color: #64748b; margin-top: 24px;">Clicking "Reply" to this email will reply directly to ${email.trim()}.</p>
+              <div style="font-family: sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
+                <h2 style="color: #059669; margin-top: 0; font-size: 20px;">New Portfolio Inquiry</h2>
+                <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                  <p style="margin: 4px 0;"><strong>Sender:</strong> ${name.trim()}</p>
+                  <p style="margin: 4px 0;"><strong>Email:</strong> <a href="mailto:${email.trim()}" style="color: #0284c7;">${email.trim()}</a></p>
+                </div>
+                <p style="margin-bottom: 6px;"><strong>Message:</strong></p>
+                <div style="background: #ffffff; border-left: 4px solid #10b981; padding: 12px 16px; margin: 0; white-space: pre-wrap; font-size: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">${message.trim()}</div>
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0 16px;" />
+                <p style="font-size: 12px; color: #64748b; margin: 0;">Hit "Reply" in your email client to reply directly to ${email.trim()}.</p>
               </div>
             `,
             textContent: `New message from ${name.trim()} (${email.trim()}):\n\n${message.trim()}`,
@@ -90,19 +96,72 @@ export async function POST(request: Request) {
         });
 
         if (brevoRes.ok) {
-          dispatched = true;
-        } else {
-          const errorData = await brevoRes.json().catch(() => ({}));
-          console.error("Brevo API error:", errorData);
+          return NextResponse.json({
+            success: true,
+            message: "Thank you for reaching out! Your message has been sent to Alemu.",
+          });
         }
+
+        const errorData = await brevoRes.json().catch(() => ({}));
+        console.error("[Brevo API Error Response]:", errorData);
+
+        const errorMessage =
+          (errorData as { message?: string })?.message ||
+          "Brevo was unable to deliver this email.";
+
+        return NextResponse.json(
+          {
+            error: `Brevo Delivery Error: ${errorMessage}. Please check your Brevo API key and verified sender email (${brevoSenderEmail}), or email directly.`,
+          },
+          { status: 502 }
+        );
       } catch (brevoErr) {
-        console.error("Brevo request error:", brevoErr);
+        console.error("[Brevo Request Exception]:", brevoErr);
+        return NextResponse.json(
+          {
+            error:
+              "Network error connecting to Brevo. Please check your internet connection or email directly.",
+          },
+          { status: 502 }
+        );
       }
     }
 
-    // B. Resend fallback (if BREVO_API_KEY is not set)
-    const resendApiKey = process.env.RESEND_API_KEY;
-    if (!dispatched && resendApiKey) {
+    // 5. Fallback if Web3Forms Access Key is present
+    const web3FormsKey = process.env.WEB3FORMS_ACCESS_KEY?.trim();
+    if (web3FormsKey) {
+      try {
+        const w3Res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            access_key: web3FormsKey,
+            name: name.trim(),
+            email: email.trim(),
+            message: message.trim(),
+            subject: `Portfolio Message from ${name.trim()}`,
+            from_name: "Portfolio Contact Form",
+          }),
+        });
+
+        const w3Data = await w3Res.json().catch(() => ({}));
+        if (w3Res.ok && w3Data.success) {
+          return NextResponse.json({
+            success: true,
+            message: "Thank you for reaching out! Your message has been sent to Alemu.",
+          });
+        }
+      } catch (w3Err) {
+        console.error("Web3Forms error:", w3Err);
+      }
+    }
+
+    // 6. Fallback if Resend API key is present
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
+    if (resendApiKey) {
       try {
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
@@ -114,36 +173,36 @@ export async function POST(request: Request) {
             from: "Portfolio Contact <onboarding@resend.dev>",
             to: [toEmail],
             reply_to: email.trim(),
-            subject: `Portfolio Contact from ${name.trim()}`,
+            subject: `Portfolio Message from ${name.trim()}`,
             text: `Name: ${name.trim()}\nEmail: ${email.trim()}\n\nMessage:\n${message.trim()}`,
           }),
         });
 
         if (res.ok) {
-          dispatched = true;
-        } else {
-          const errorData = await res.json().catch(() => ({}));
-          console.error("Resend API error:", errorData);
+          return NextResponse.json({
+            success: true,
+            message: "Thank you for reaching out! Your message has been sent.",
+          });
         }
       } catch (resendErr) {
-        console.error("Resend request error:", resendErr);
+        console.error("Resend error:", resendErr);
       }
     }
 
-    if (!dispatched) {
-      // In local dev without keys, log to console
-      console.log("[Contact Form Message Received]:", {
-        name: name.trim(),
-        email: email.trim(),
-        message: message.trim(),
-        timestamp: new Date().toISOString(),
-      });
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: "Thank you for reaching out! Your message has been received.",
+    // 6. If no valid email provider API key is configured
+    console.warn("[Contact Form API Key Missing]: Message not sent via email:", {
+      name: name.trim(),
+      email: email.trim(),
+      message: message.trim(),
     });
+
+    return NextResponse.json(
+      {
+        error:
+          "Email service is not yet activated: BREVO_API_KEY is missing or unconfigured. Please add your Brevo API key in .env.local, or contact directly via alemugetu2123@gmail.com.",
+      },
+      { status: 503 }
+    );
   } catch (err) {
     console.error("Contact route exception:", err);
     return NextResponse.json(
