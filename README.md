@@ -4,7 +4,7 @@ Production-grade personal portfolio for **Alemu Getu Adane**, Junior Full-Stack 
 
 ## Features
 
-- **Interactive Multilingual Header Translation**: Dynamic animated greeting cycling between English, native Amharic (_ሰላም, እኔ_), French, and Spanish with one-click interactive language switching.
+- **Kinetic Hero Entrance & Interactive Text Animation**: Waving hand welcome animation (`👋`), dynamic typewriter arrival effect with glowing terminal caret, shimmering gradient typography, and interactive character-bounce physics on hover and click.
 - **Interactive 3D Motion Design**: Physics-based 3D card tilt ([Card3DTilt](file:///home/alex/Documents/portfolio/src/components/shared/card-3d-tilt.tsx)) with specular glare, orbital perspective rings, and spatial parallax depth on both the Hero profile photo and credentials card.
 - **Pure CSS Image Carousel**: Custom scroll-snap carousel with desktop mouse-drag velocity, smooth keyboard controls, and accessible touch swiping.
 - **Data-Driven Architecture**: Sourced strictly from verified resume data: Store.ethio, PulseDesk, Blood Bank Management, BSc Computer Science degree, and technical stack.
