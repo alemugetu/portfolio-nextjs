@@ -161,9 +161,77 @@ body {
   animation: spinSlow 24s linear infinite;
 }
 
+/* Kinetic Header Text & Hand Wave Animations */
+@keyframes waveHand {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes gradientShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes cursorBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-wave {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: waveHand 2.4s ease-in-out infinite;
+}
+
+.animate-gradient-shimmer {
+  background-size: 200% 200%;
+  animation: gradientShimmer 6s ease infinite;
+}
+
+.animate-cursor-blink {
+  animation: cursorBlink 0.9s steps(2, start) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-float-subtle,
-  .animate-spin-slow {
+  .animate-spin-slow,
+  .animate-wave,
+  .animate-gradient-shimmer,
+  .animate-cursor-blink {
     animation: none !important;
   }
 }
