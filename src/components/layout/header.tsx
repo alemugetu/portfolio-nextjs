@@ -125,7 +125,7 @@ export function Header() {
 
             <a
               href={siteConfig.resumeUrl}
-              download="Alemu_Getu_Adane_Resume.md"
+              download="Alemu_Getu_Adane_Resume.pdf"
               className="hidden items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700 hover:shadow-emerald-500/20 active:scale-95 sm:inline-flex dark:bg-emerald-500 dark:text-slate-950 dark:hover:bg-emerald-400"
             >
               <Download className="h-3.5 w-3.5" />
@@ -176,12 +176,12 @@ export function Header() {
               <div className="mt-4 border-t border-black/10 pt-4 dark:border-white/10">
                 <a
                   href={siteConfig.resumeUrl}
-                  download="Alemu_Getu_Adane_Resume.md"
+                  download="Alemu_Getu_Adane_Resume.pdf"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-md dark:bg-emerald-500 dark:text-slate-950"
                 >
                   <Download className="h-4 w-4" />
-                  <span>Download Resume (Markdown)</span>
+                  <span>Download Resume (PDF)</span>
                 </a>
               </div>
             </nav>

@@ -84,7 +84,7 @@ export function HeroSection() {
 
                 <a
                   href={siteConfig.resumeUrl}
-                  download="Alemu_Getu_Adane_Resume.md"
+                  download="Alemu_Getu_Adane_Resume.pdf"
                   className="text-foreground inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-black/15 px-5 text-sm font-semibold transition-all hover:scale-[1.02] hover:bg-black/5 active:scale-[0.98] dark:border-white/15 dark:hover:bg-white/5"
                 >
                   <Download className="h-4 w-4 text-emerald-500" />

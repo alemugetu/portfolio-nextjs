@@ -107,7 +107,7 @@ export function ExperienceSection() {
 
                   <a
                     href={siteConfig.resumeUrl}
-                    download="Alemu_Getu_Adane_Resume.md"
+                    download="Alemu_Getu_Adane_Resume.pdf"
                     className="text-foreground inline-flex items-center justify-center gap-2 rounded-xl border border-black/10 px-5 py-2.5 text-xs font-semibold transition-colors hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5"
                   >
                     <Download className="h-3.5 w-3.5 text-emerald-500" />

@@ -5,7 +5,7 @@ export const siteConfig = {
     "Portfolio of Alemu Getu Adane: Junior Full-Stack Developer & 4th-year Computer Science student at University of Gondar building real-world web applications with React, Next.js, Django, Node.js, and PostgreSQL.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://alemugetu.vercel.app",
   ogImage: "/images/profile/me.jpeg",
-  resumeUrl: "/resume/Alemu_Getu_Adane_Resume.md",
+  resumeUrl: "/resume/Alemu_Getu_Adane_Resume.pdf",
   location: "Gondar, Ethiopia",
   author: {
     name: "Alemu Getu Adane",
