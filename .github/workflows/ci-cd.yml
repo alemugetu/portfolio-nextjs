@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  # Quality Gates: TypeScript, ESLint, Prettier, Next.js Build
+  verify:
+    name: Lint, Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck TypeScript
+        run: npm run typecheck
+
+      - name: Lint Code
+        run: npm run lint
+
+      - name: Verify Formatting (Prettier)
+        run: npm run format:check
+
+      - name: Production Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://alemugetu.vercel.app' }}
+
+  # Continuous Deployment (Vercel)
+  deploy:
+    name: Deploy to Production
+    needs: verify
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        if: ${{ env.VERCEL_TOKEN != '' }}
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deployment Notice (if Vercel token not configured)
+        if: ${{ env.VERCEL_TOKEN == '' }}
+        run: |
+          echo "=========================================================="
+          echo "CI Quality Checks Passed!"
+          echo "To enable direct continuous deployment to Vercel:"
+          echo "1. Connect your repo in Vercel, or"
+          echo "2. Add VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID in GitHub Repository Secrets."
+          echo "=========================================================="
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

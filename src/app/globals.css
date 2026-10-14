@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #080c14;
+  --foreground: #f1f5f9;
+  --card: #0d1320;
+  --card-foreground: #f1f5f9;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --muted: #131b2c;
+  --muted-foreground: #94a3b8;
+  --accent: #10b981;
+  --accent-foreground: #042f2e;
+  --accent-glow: rgba(16, 185, 129, 0.18);
+  --cyan-accent: #06b6d4;
+  --ring: #10b981;
+  --surface-glass: rgba(8, 12, 20, 0.85);
+}
+
+:root.light {
+  --background: #f8fafc;
+  --foreground: #090d16;
+  --card: #ffffff;
+  --card-foreground: #090d16;
+  --card-border: rgba(15, 23, 42, 0.08);
+  --muted: #f1f5f9;
+  --muted-foreground: #526071;
+  --accent: #059669;
+  --accent-foreground: #ffffff;
+  --accent-glow: rgba(5, 150, 105, 0.12);
+  --cyan-accent: #0891b2;
+  --ring: #059669;
+  --surface-glass: rgba(255, 255, 255, 0.85);
+}
+
+:root.dark {
+  --background: #080c14;
+  --foreground: #f1f5f9;
+  --card: #0d1320;
+  --card-foreground: #f1f5f9;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --muted: #131b2c;
+  --muted-foreground: #94a3b8;
+  --accent: #10b981;
+  --accent-foreground: #042f2e;
+  --accent-glow: rgba(16, 185, 129, 0.18);
+  --cyan-accent: #06b6d4;
+  --ring: #10b981;
+  --surface-glass: rgba(8, 12, 20, 0.85);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-border: var(--card-border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-glow: var(--accent-glow);
+  --color-cyan-accent: var(--cyan-accent);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family:
+    var(--font-sans),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  overflow-x: clip;
+  min-height: 100vh;
+}
+
+/* Accessible focus visible outlines */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Skip link for keyboard users */
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: top 0.15s ease-in-out;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Subtle glowing accent background */
+.accent-glow-subtle {
+  background: radial-gradient(
+    circle at 50% 0%,
+    var(--accent-glow) 0%,
+    transparent 70%
+  );
+}
+
+/* 3D Motion Keyframes */
+@keyframes floatSubtle {
+  0%,
+  100% {
+    transform: perspective(1000px) translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(1000px) translateY(-7px) rotateX(1.2deg)
+      rotateY(-1.2deg);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float-subtle {
+  animation: floatSubtle 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 24s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-subtle,
+  .animate-spin-slow {
+    animation: none !important;
+  }
+}
