@@ -44,8 +44,7 @@ export async function POST(request: Request) {
       process.env.CONTACT_TO_EMAIL?.trim() ||
       process.env.BREVO_SENDER_EMAIL?.trim() ||
       "alemugetu2123@gmail.com";
-    const brevoSenderEmail =
-      process.env.BREVO_SENDER_EMAIL?.trim() || toEmail;
+    const brevoSenderEmail = process.env.BREVO_SENDER_EMAIL?.trim() || toEmail;
 
     const hasRealBrevoKey =
       Boolean(brevoApiKey) &&
@@ -98,7 +97,8 @@ export async function POST(request: Request) {
         if (brevoRes.ok) {
           return NextResponse.json({
             success: true,
-            message: "Thank you for reaching out! Your message has been sent to Alemu.",
+            message:
+              "Thank you for reaching out! Your message has been sent to Alemu.",
           });
         }
 
@@ -151,7 +151,8 @@ export async function POST(request: Request) {
         if (w3Res.ok && w3Data.success) {
           return NextResponse.json({
             success: true,
-            message: "Thank you for reaching out! Your message has been sent to Alemu.",
+            message:
+              "Thank you for reaching out! Your message has been sent to Alemu.",
           });
         }
       } catch (w3Err) {
@@ -190,11 +191,14 @@ export async function POST(request: Request) {
     }
 
     // 6. If no valid email provider API key is configured
-    console.warn("[Contact Form API Key Missing]: Message not sent via email:", {
-      name: name.trim(),
-      email: email.trim(),
-      message: message.trim(),
-    });
+    console.warn(
+      "[Contact Form API Key Missing]: Message not sent via email:",
+      {
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+      }
+    );
 
     return NextResponse.json(
       {
