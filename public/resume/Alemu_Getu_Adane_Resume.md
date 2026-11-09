@@ -48,7 +48,7 @@ Personal Project
 
 Tech Stack: React, TypeScript, Vite, Tailwind CSS, TanStack Query, Zustand, React Router, Vitest | Django, Django REST Framework, PostgreSQL, JWT, Celery, Redis, Django Channels
 
-Live Demo: pulsedesk-flax.vercel.app
+GitHub: https://github.com/alemugetu/pulsedesk
 
 ## Blood Bank Management System — MERN Stack
 

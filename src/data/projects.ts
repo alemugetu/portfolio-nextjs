@@ -66,7 +66,7 @@ export const projects: Project[] = [
       "Celery",
       "Redis",
     ],
-    liveUrl: "https://pulsedesk-flax.vercel.app",
+    repoUrl: "https://github.com/alemugetu/pulsedesk",
     featured: true,
   },
   {
